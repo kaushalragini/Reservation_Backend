@@ -21,23 +21,29 @@ let status = [0, 0, 0, 0, 0, 0, 0, 0];
 const seatBookingPossible = (number) => {
   if (number > 7) {
     return false;
-  }
-  else {
+  } else {
     return true;
   }
 };
 
 const seatBooking = (number) => {
   if (seatBookingPossible(number)) {
+    let flag = false;
     for (let i = 0; i < seats.length; i++) {
-      if (status[i]) {
-        continue;
-      }
       console.log("aaaa");
       console.log(emptySeats[i], number);
+      if (status[i]) {
+        if (i === 11) {
+          return false;
+        }
+        continue;
+      }
+
       if (emptySeats[i] >= number) {
         let j;
-        for (j = 7 - emptySeats[i]; j < 7 - emptySeats[i] + number; j++) {
+        let startIndex = i === 11 ? 3 - emptySeats[i] : 7 - emptySeats[i];
+        console.log("startIndex => currentRow ", startIndex, i);
+        for (j = startIndex; j < startIndex + number; j++) {
           seats[i][j] = 1;
         }
         emptySeats[i] -= number;
@@ -48,6 +54,9 @@ const seatBooking = (number) => {
         }
         break;
       } else {
+        if (i === 11) {
+          return false;
+        }
         continue;
       }
     }
@@ -98,7 +107,6 @@ trainRouter.post("/reset", async (req, res) => {
   ];
   emptySeats = [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3];
   status = [0, 0, 0, 0, 0, 0, 0, 0];
-
 
   res.send({ msg: "reset successfully", data: seats });
 });
