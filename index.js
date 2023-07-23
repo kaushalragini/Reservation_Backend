@@ -10,7 +10,6 @@ const cors = require("cors");
 app.use(bodyParser.json());
 // app.use(validation);
 app.use(cors());
-console.log("aaaaa");
 app.use("/train", trainRouter);
 //process.env.PORT
 app.listen(8080, () => {

@@ -1,10 +1,6 @@
 const express = require("express");
-// const {TrainModel} = require("../models/train.models")
 const trainRouter = express.Router();
-// const { record } = require("../middleware/record.middleware");
 
-let lastBookedRow = 0;
-let lastBookedCol = 0;
 let seats = [
   [0, 0, 0, 0, 0, 0, 0], //0
   [0, 0, 0, 0, 0, 0, 0], //1
@@ -25,20 +21,10 @@ let status = [0, 0, 0, 0, 0, 0, 0, 0];
 const seatBookingPossible = (number) => {
   if (number > 7) {
     return false;
-  } else if (lastBookedRow === 11 && lastBookedCol >= 4) {
-    return false;
-  } else if (lastBookedRow >= 12) {
-    return false;
-  } else {
+  }
+  else {
     return true;
   }
-};
-
-const seatBookingInRow = (number, row) => {
-  if (emptySeats[row] <= number) {
-    return true;
-  }
-  return false;
 };
 
 const seatBooking = (number) => {
@@ -49,21 +35,15 @@ const seatBooking = (number) => {
       }
       console.log("aaaa");
       console.log(emptySeats[i], number);
-
       if (emptySeats[i] >= number) {
         let j;
         for (j = 7 - emptySeats[i]; j < 7 - emptySeats[i] + number; j++) {
           seats[i][j] = 1;
         }
         emptySeats[i] -= number;
-        // lastBookedCol = lastBookedCol + number;
         if (i !== 11 && j >= 7) {
-          // lastBookedRow++;
-          // lastBookedCol = 0;
           status[i] = 1;
         } else if (i === 11 && j >= 3) {
-          // lastBookedRow++;
-          // lastBookedCol = 0;
           status[i] = 1;
         }
         break;
@@ -86,47 +66,6 @@ trainRouter.post("/book", async (req, res) => {
     } else {
       res.send({ msg: "Seat can not be booked", data: seats });
     }
-    // check if seat can be booked
-    // if seat can be booked book
-    // if (seatBookingPossible(number)) {
-    //   if (number === 1) {
-    //     seats[lastBookedRow][lastBookedCol] = 1;
-    //     lastBookedCol += 1;
-    //   } else if (number <= 6 - lastBookedCol + 1) {
-    //     for (let i = lastBookedCol; i < lastBookedCol + number; i++) {
-    //       seats[lastBookedRow][i] = 1;
-    //     }
-    //     lastBookedCol = lastBookedCol + number;
-    //   } else if (number > 6 - lastBookedCol) {
-    //     let seatInCurrentRow = 6 - lastBookedCol;
-    //     console.log(number, seatInCurrentRow, lastBookedCol);
-    //     for (
-    //       let i = lastBookedCol;
-    //       i <= lastBookedCol + seatInCurrentRow;
-    //       i++
-    //     ) {
-    //       seats[lastBookedRow][i] = 1;
-    //     }
-    //     lastBookedRow++;
-    //     lastBookedCol = 0;
-    //     let seatInNextRow = number - seatInCurrentRow - 1;
-    //     for (let i = 0; i < seatInNextRow; i++) {
-    //       seats[lastBookedRow][i] = 1;
-    //     }
-    //     lastBookedCol = seatInNextRow;
-    //   }
-    //   if (lastBookedRow !== 11 && lastBookedCol >= 7) {
-    //     lastBookedRow++;
-    //     lastBookedCol = 0;
-    //   } else if (lastBookedRow === 11 && lastBookedCol >= 3) {
-    //     lastBookedRow++;
-    //     lastBookedCol = 0;
-    //   }
-    //   console.log(seats);
-    //   res.send({ msg: "Seat booked successfully", data: seats });
-    // } else {
-    //   res.send({ msg: "Seat can not be booked", data: seats });
-    // }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Error booking seat" });
@@ -159,8 +98,7 @@ trainRouter.post("/reset", async (req, res) => {
   ];
   emptySeats = [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3];
   status = [0, 0, 0, 0, 0, 0, 0, 0];
-  lastBookedRow = 0;
-  lastBookedCol = 0;
+
 
   res.send({ msg: "reset successfully", data: seats });
 });
