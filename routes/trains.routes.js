@@ -24,7 +24,7 @@ let emptySeats = [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3];
 
 // step-3 create one another array which says the status of each row no of booked seat initialize with zero which means no seat is booked
 
-let status = [0, 0, 0, 0, 0, 0, 0, 0];
+let status = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 // step-4 apply basic condition which one function
 
 const seatBookingPossible = (number) => {
@@ -53,7 +53,6 @@ const seatBooking = (number) => {
       }
       // if emptyseats array element is greater than number which means seat is available
       if (emptySeats[i] >= number) {
-
         let j;
 
         let startIndex = i === 11 ? 3 - emptySeats[i] : 7 - emptySeats[i];
