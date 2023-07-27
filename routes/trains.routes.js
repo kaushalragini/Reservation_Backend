@@ -4,6 +4,39 @@ const trainRouter = express.Router();
 // used 2d array dataStructure to make this seat
 // initialize each row inside element with zero which means seat is empty
 // for the last row take only three element to make seat count 80
+// let total_seat = 90;
+// let nRows = 12;
+// let ncol;
+// let lastRowCol;
+
+// if (total_seat % nRows === 0) {
+//   ncol = Math.ceil(total_seat / nRows);
+//   lastRowCol = 0;
+// } else {
+//   ncol = Math.ceil(total_seat / (nRows - 1)) - 1;
+//   lastRowCol = total_seat -((nRows - 1) * ncol) ;
+// }
+// let nCol = Math.ceil(total_seat / nRows);
+
+// let seatss = [];
+// for (let i = 0; i < nRows; i++) {
+//   let seat = [];
+//   let last = ncol;
+//   for (let j = 0; j < ncol; j++) {
+//     seat[j] = 0;
+//   }
+//   seatss.push(seat);
+// }
+
+// let lastRowArray = [];
+// for (let i = 0; i < lastRowCol; i++) {
+//   lastRowArray[i] = 0;
+// }
+// if (lastRowCol) {
+//   seatss.push(lastRowArray);
+// }
+// // seatss.push(lastRowArray);
+// console.log(seatss);
 
 let seats = [
   [0, 0, 0, 0, 0, 0, 0], //0
@@ -19,6 +52,7 @@ let seats = [
   [0, 0, 0, 0, 0, 0, 0], //10
   [0, 0, 0], //11
 ];
+
 // step-2 create one more array which says number of empty seat in each row
 let emptySeats = [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 3];
 
@@ -39,12 +73,14 @@ const seatBookingPossible = (number) => {
 // step-5 make another function for handling all possible cases
 
 const seatBooking = (number) => {
+  // if saet boking is possible go inside other wise return false
   if (seatBookingPossible(number)) {
     // if number is less than 7 then run a loop on 2d array
     for (let i = 0; i < seats.length; i++) {
       console.log(emptySeats[i], number);
+
       // if status[i]===1 which means you seat is already booked and return false
-      if (status[i]) {
+      if (status[i] === 1) {
         // check one more condition like i===11 means no more row is availabe to check
         if (i === 11) {
           return false;
@@ -53,13 +89,33 @@ const seatBooking = (number) => {
       }
       // if emptyseats array element is greater than number which means seat is available
       if (emptySeats[i] >= number) {
-        let j;
-
-        let startIndex = i === 11 ? 3 - emptySeats[i] : 7 - emptySeats[i];
-        console.log("startIndex => currentRow ", startIndex, i);
-        for (j = startIndex; j < startIndex + number; j++) {
-          seats[i][j] = 1;
+        let minValue = +Infinity;
+        let minIndex = -1;
+        for (let k = 0; k < emptySeats.length; i++) {
+          let diff = emptySeats[k] - number;
+          if (diff < minValue) {
+            minValue = diff;
+            minIndex = k;
+          }
+          // console.log(minValue, minIndex);
         }
+        if (minIndex) {
+          let startIndex =
+            minIndex === 11
+              ? 3 - emptySeats[minIndex]
+              : 7 - emptySeats[minIndex];
+          console.log("startIndex => currentRow ", startIndex, i);
+          for (j = startIndex; j < startIndex + number; j++) {
+            seats[i][j] = 1;
+          }
+        } else {
+          let startIndex = i === 11 ? 3 - emptySeats[i] : 7 - emptySeats[i];
+          console.log("startIndex => currentRow ", startIndex, i);
+          for (j = startIndex; j < startIndex + number; j++) {
+            seats[i][j] = 1;
+          }
+        }
+
         emptySeats[i] -= number;
         if (i !== 11 && j >= 7) {
           status[i] = 1;
@@ -83,9 +139,13 @@ const seatBooking = (number) => {
 trainRouter.post("/book", async (req, res) => {
   const number = parseInt(req.body.number);
   console.log("number ", number);
+
   try {
     if (seatBooking(number)) {
+      
       res.send({ msg: "Seat booked successfully", data: seats });
+      
+
     } else {
       res.send({ msg: "Seat can not be booked", data: seats });
     }
@@ -96,13 +156,13 @@ trainRouter.post("/book", async (req, res) => {
 });
 
 // Routes
-trainRouter.get("/list", async (req, res) => {
-  try {
-    res.send({ data: "aaaaaaa" });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching seats" });
-  }
-});
+// trainRouter.get("/list", async (req, res) => {
+//   try {
+//     res.send({ data: "aaaaaaa" });
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching seats" });
+//   }
+// });
 
 trainRouter.post("/reset", async (req, res) => {
   seats = [

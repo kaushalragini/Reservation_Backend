@@ -5,7 +5,9 @@ const { trainRouter } = require("./routes/trains.routes");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 // Middleware
 app.use(bodyParser.json());
 
