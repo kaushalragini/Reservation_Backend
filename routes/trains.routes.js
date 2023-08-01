@@ -89,44 +89,49 @@ const seatBooking = (number) => {
       }
       // if emptyseats array element is greater than number which means seat is available
       if (emptySeats[i] >= number) {
+        console.log("1111111", emptySeats);
         let minValue = +Infinity;
         let minIndex = -1;
-        for (let k = 0; k < emptySeats.length; i++) {
+        for (let k = 0; k < emptySeats.length; k++) {
           let diff = emptySeats[k] - number;
-          if (diff < minValue) {
+          if (diff >= 0 && diff < minValue) {
             minValue = diff;
             minIndex = k;
           }
-          // console.log(minValue, minIndex);
+          console.log(minValue, minIndex);
         }
-        if (minIndex) {
+        console.log("got the minimum index ", minIndex);
+        if (minIndex !== -1) {
           let startIndex =
             minIndex === 11
               ? 3 - emptySeats[minIndex]
               : 7 - emptySeats[minIndex];
-          console.log("startIndex => currentRow ", startIndex, i);
+          console.log("1startIndex => currentRow ", startIndex, minIndex);
           for (j = startIndex; j < startIndex + number; j++) {
-            seats[i][j] = 1;
+            seats[minIndex][j] = 1;
           }
         } else {
           let startIndex = i === 11 ? 3 - emptySeats[i] : 7 - emptySeats[i];
-          console.log("startIndex => currentRow ", startIndex, i);
+          console.log("2startIndex => currentRow ", startIndex, i);
           for (j = startIndex; j < startIndex + number; j++) {
             seats[i][j] = 1;
           }
         }
-
-        emptySeats[i] -= number;
-        if (i !== 11 && j >= 7) {
-          status[i] = 1;
-        } else if (i === 11 && j >= 3) {
-          status[i] = 1;
+        let indexChange = minIndex === -1 ? i : minIndex;
+        emptySeats[indexChange] -= number;
+        if (indexChange !== 11 && j >= 7) {
+          status[indexChange] = 1;
+        } else if (indexChange === 11 && j >= 3) {
+          status[indexChange] = 1;
         }
         break;
       } else {
+        console.log("2222222222");
         if (i === 11) {
+          console.log("3333333333");
           return false;
         }
+        console.log("444444444");
         continue;
       }
     }
@@ -142,10 +147,7 @@ trainRouter.post("/book", async (req, res) => {
 
   try {
     if (seatBooking(number)) {
-      
       res.send({ msg: "Seat booked successfully", data: seats });
-      
-
     } else {
       res.send({ msg: "Seat can not be booked", data: seats });
     }
